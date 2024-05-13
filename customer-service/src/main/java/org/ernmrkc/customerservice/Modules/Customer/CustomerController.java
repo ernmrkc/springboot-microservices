@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.ernmrkc.customerservice.Modules.Customer.CommandHandlers.CreateCustomerCommandHandler;
 import org.ernmrkc.customerservice.Modules.Customer.CommandHandlers.DeleteCustomerCommandHandler;
 import org.ernmrkc.customerservice.Modules.Customer.CommandHandlers.UpdateCustomerCommandHandler;
+import org.ernmrkc.customerservice.Services.Customer_Address.CustomerAddressCommandService;
 import org.ernmrkc.customerservice.Modules.Customer.Models.Customer;
 import org.ernmrkc.customerservice.Modules.Customer.Models.CustomerDTO;
 import org.ernmrkc.customerservice.Modules.Customer.Models.UpdateCustomerCommand;
@@ -24,17 +25,20 @@ public class CustomerController {
     private final UpdateCustomerCommandHandler updateCustomerCommandHandler;
     private final GetAllCustomersQueryHandler getAllCustomersQueryHandler;
     private final GetAllCustomerDTOsQueryHandler getAllCustomerDTOsQueryHandler;
+    private final CustomerAddressCommandService customerAddressCommandService;
 
     public CustomerController(CreateCustomerCommandHandler createCustomerCommandHandler,
                               DeleteCustomerCommandHandler deleteCustomerCommandHandler,
                               UpdateCustomerCommandHandler updateCustomerCommandHandler,
                               GetAllCustomersQueryHandler getAllCustomersQueryHandler,
-                              GetAllCustomerDTOsQueryHandler getAllCustomerDTOsQueryHandler) {
+                              GetAllCustomerDTOsQueryHandler getAllCustomerDTOsQueryHandler,
+                              CustomerAddressCommandService customerAddressCommandService) {
         this.createCustomerCommandHandler = createCustomerCommandHandler;
         this.deleteCustomerCommandHandler = deleteCustomerCommandHandler;
         this.updateCustomerCommandHandler = updateCustomerCommandHandler;
         this.getAllCustomersQueryHandler = getAllCustomersQueryHandler;
         this.getAllCustomerDTOsQueryHandler = getAllCustomerDTOsQueryHandler;
+        this.customerAddressCommandService = customerAddressCommandService;
     }
 
     @GetMapping
@@ -61,5 +65,10 @@ public class CustomerController {
     public ResponseEntity<Customer> updateCustomer(@RequestParam(value = "id") UUID id, @Valid @RequestBody Customer customer, BindingResult bindingResult){
         UpdateCustomerCommand updateCustomerCommand = new UpdateCustomerCommand(id, customer);
         return updateCustomerCommandHandler.execute(updateCustomerCommand, bindingResult);
+    }
+
+    @PutMapping("/add-address")
+    public ResponseEntity<Customer> addAddressToCustomer(@RequestParam(value = "customer_id") UUID customer_id, @RequestParam(value = "address_id") UUID address_id){
+        return customerAddressCommandService.addAddressToCustomer(customer_id, address_id);
     }
 }

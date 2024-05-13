@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.ernmrkc.customerservice.Modules.Address.Models.Address;
+import org.ernmrkc.customerservice.Modules.Cart.Models.Cart;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
@@ -20,7 +21,7 @@ public class Customer {
     @Column(name = "customer_id")
     private UUID id;
 
-    @NotBlank(message = "{username.not.blank}")
+    @NotBlank(message = "Username cannot be empty")
     @Size(max = 30, message = "Username must not exceed 30 characters")
     @Column(name = "username", nullable = false, unique = true)
     private String username;
@@ -59,4 +60,12 @@ public class Customer {
             inverseJoinColumns = @JoinColumn(name = "address_id")
     )
     private List<Address> addresses;
+
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    private Cart cart;
+
+    public void setCart(Cart cart){
+        this.cart = cart;
+        cart.setCustomer(this);
+    }
 }

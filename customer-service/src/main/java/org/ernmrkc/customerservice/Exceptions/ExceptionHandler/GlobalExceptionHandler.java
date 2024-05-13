@@ -1,9 +1,6 @@
 package org.ernmrkc.customerservice.Exceptions.ExceptionHandler;
 
-import org.ernmrkc.customerservice.Exceptions.AddressDataNotValidException;
-import org.ernmrkc.customerservice.Exceptions.AddressNotFoundException;
-import org.ernmrkc.customerservice.Exceptions.CustomerDataNotValidException;
-import org.ernmrkc.customerservice.Exceptions.CustomerNotFoundException;
+import org.ernmrkc.customerservice.Exceptions.*;
 import org.ernmrkc.customerservice.Exceptions.Model.CustomBaseException;
 import org.ernmrkc.customerservice.Exceptions.Model.SimpleResponse;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +27,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AddressNotFoundException.class)
     public ResponseEntity<SimpleResponse> handleAddressNotFoundException(CustomBaseException exception){
+        return ResponseEntity.status(exception.getStatus()).body(exception.getSimpleResponse());
+    }
+
+    @ExceptionHandler(CartItemDataNotValidException.class)
+    public ResponseEntity<SimpleResponse> handleCartItemDataNotValidException(CustomBaseException exception){
+        return ResponseEntity.status(exception.getStatus()).body(exception.getSimpleResponse());
+    }
+
+    @ExceptionHandler(CartItemNotFoundException.class)
+    public ResponseEntity<SimpleResponse> handleCartItemNotFoundException(CustomBaseException exception){
+        return ResponseEntity.status(exception.getStatus()).body(exception.getSimpleResponse());
+    }
+
+    @ExceptionHandler(CartNotFoundException.class)
+    public ResponseEntity<SimpleResponse> handleCartNotFoundException(CustomBaseException exception){
         return ResponseEntity.status(exception.getStatus()).body(exception.getSimpleResponse());
     }
 }
