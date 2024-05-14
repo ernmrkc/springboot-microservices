@@ -7,6 +7,7 @@ import org.ernmrkc.customerservice.Modules.Address.Models.Address;
 import org.ernmrkc.customerservice.Modules.Customer.CustomerRepository;
 import org.ernmrkc.customerservice.Modules.Customer.Models.Customer;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,18 +24,20 @@ public class CustomerAddressCommandService {
         this.addressRepository = addressRepository;
     }
 
-    // TODO: JavaDoc
-    public ResponseEntity<Customer> addAddressToCustomer(UUID customerId, UUID addressId){
-        Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
+    // TODO: JavaDoc - Check extra repository operations
+    public ResponseEntity<Customer> addAddressToCustomer(UUID addressId, Authentication authentication){
+        String authenticatedUsername = authentication.getName();
+        Optional<Customer> authenticatedOptionalCustomer = customerRepository.findByUsername(authenticatedUsername);
         Optional<Address> optionalAddress = addressRepository.findById(addressId);
 
-        if (optionalCustomer.isEmpty()){
+        if (authenticatedOptionalCustomer.isEmpty()){
             throw new CustomerNotFoundException();
         }
         if (optionalAddress.isEmpty()){
             throw new AddressNotFoundException();
         }
-        Customer customer = optionalCustomer.get();
+
+        Customer customer = authenticatedOptionalCustomer.get();
         Address address = optionalAddress.get();
 
         customer.getAddresses().add(address);

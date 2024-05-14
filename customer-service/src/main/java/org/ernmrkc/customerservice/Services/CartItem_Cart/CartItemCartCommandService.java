@@ -6,11 +6,13 @@ import org.ernmrkc.customerservice.Modules.Cart.CartRepository;
 import org.ernmrkc.customerservice.Modules.Cart.Models.Cart;
 import org.ernmrkc.customerservice.Modules.CartItem.CartItemRepository;
 import org.ernmrkc.customerservice.Modules.CartItem.Models.CartItem;
+import org.ernmrkc.customerservice.Modules.Customer.Models.Customer;
 import org.ernmrkc.customerservice.Validations.CartItemValidationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,6 +53,7 @@ public class CartItemCartCommandService {
         return ResponseEntity.ok().build();
     }
 
+    // TODO: JavaDoc
     public ResponseEntity<CartItem> updateCartItemQuantity(UUID cartItemId, Integer newQuantity){
         Optional<CartItem> optionalCartItem = cartItemRepository.findById(cartItemId);
         if (optionalCartItem.isEmpty()){

@@ -4,13 +4,17 @@ import jakarta.validation.Valid;
 import org.ernmrkc.customerservice.Modules.Customer.CommandHandlers.CreateCustomerCommandHandler;
 import org.ernmrkc.customerservice.Modules.Customer.CommandHandlers.DeleteCustomerCommandHandler;
 import org.ernmrkc.customerservice.Modules.Customer.CommandHandlers.UpdateCustomerCommandHandler;
+import org.ernmrkc.customerservice.Security.Models.JwtResponse;
+import org.ernmrkc.customerservice.Security.Models.LoginRequest;
 import org.ernmrkc.customerservice.Services.Customer_Address.CustomerAddressCommandService;
 import org.ernmrkc.customerservice.Modules.Customer.Models.Customer;
 import org.ernmrkc.customerservice.Modules.Customer.Models.CustomerDTO;
 import org.ernmrkc.customerservice.Modules.Customer.Models.UpdateCustomerCommand;
 import org.ernmrkc.customerservice.Modules.Customer.QueryHandlers.GetAllCustomerDTOsQueryHandler;
 import org.ernmrkc.customerservice.Modules.Customer.QueryHandlers.GetAllCustomersQueryHandler;
+import org.ernmrkc.customerservice.Services.Customer_Authentication.CustomerAuthenticationService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,19 +30,22 @@ public class CustomerController {
     private final GetAllCustomersQueryHandler getAllCustomersQueryHandler;
     private final GetAllCustomerDTOsQueryHandler getAllCustomerDTOsQueryHandler;
     private final CustomerAddressCommandService customerAddressCommandService;
+    private final CustomerAuthenticationService customerAuthenticationService;
 
     public CustomerController(CreateCustomerCommandHandler createCustomerCommandHandler,
                               DeleteCustomerCommandHandler deleteCustomerCommandHandler,
                               UpdateCustomerCommandHandler updateCustomerCommandHandler,
                               GetAllCustomersQueryHandler getAllCustomersQueryHandler,
                               GetAllCustomerDTOsQueryHandler getAllCustomerDTOsQueryHandler,
-                              CustomerAddressCommandService customerAddressCommandService) {
+                              CustomerAddressCommandService customerAddressCommandService,
+                              CustomerAuthenticationService customerAuthenticationService) {
         this.createCustomerCommandHandler = createCustomerCommandHandler;
         this.deleteCustomerCommandHandler = deleteCustomerCommandHandler;
         this.updateCustomerCommandHandler = updateCustomerCommandHandler;
         this.getAllCustomersQueryHandler = getAllCustomersQueryHandler;
         this.getAllCustomerDTOsQueryHandler = getAllCustomerDTOsQueryHandler;
         this.customerAddressCommandService = customerAddressCommandService;
+        this.customerAuthenticationService = customerAuthenticationService;
     }
 
     @GetMapping
@@ -56,6 +63,11 @@ public class CustomerController {
         return createCustomerCommandHandler.execute(customer, bindingResult);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<JwtResponse> createJwtResponse(@RequestBody LoginRequest loginRequest){
+        return customerAuthenticationService.createJwt(loginRequest.getUsername(), loginRequest.getPassword());
+    }
+
     @DeleteMapping
     public ResponseEntity<Void> deleteCustomer(@RequestParam(value = "id") UUID id){
         return deleteCustomerCommandHandler.execute(id, null);
@@ -67,8 +79,8 @@ public class CustomerController {
         return updateCustomerCommandHandler.execute(updateCustomerCommand, bindingResult);
     }
 
-    @PutMapping("/add-address")
-    public ResponseEntity<Customer> addAddressToCustomer(@RequestParam(value = "customer_id") UUID customer_id, @RequestParam(value = "address_id") UUID address_id){
-        return customerAddressCommandService.addAddressToCustomer(customer_id, address_id);
+    @PutMapping("/add-address/{addressId}")
+    public ResponseEntity<Customer> addAddressToCustomer(@PathVariable UUID addressId, Authentication authentication){
+        return customerAddressCommandService.addAddressToCustomer(addressId, authentication);
     }
 }
