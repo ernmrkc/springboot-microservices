@@ -80,7 +80,7 @@ public class CustomerController {
     }
 
     @PutMapping("/add-address/{addressId}")
-    public ResponseEntity<Customer> addAddressToCustomer(@PathVariable UUID addressId, Authentication authentication){
-        return customerAddressCommandService.addAddressToCustomer(addressId, authentication);
+    public ResponseEntity<Customer> addAddressToCustomer(@PathVariable UUID addressId){
+        return customerAddressCommandService.addAddressToCustomer(addressId);
     }
 }

@@ -8,6 +8,7 @@ import org.ernmrkc.customerservice.Modules.Customer.CustomerRepository;
 import org.ernmrkc.customerservice.Modules.Customer.Models.Customer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,7 +26,8 @@ public class CustomerAddressCommandService {
     }
 
     // TODO: JavaDoc - Check extra repository operations
-    public ResponseEntity<Customer> addAddressToCustomer(UUID addressId, Authentication authentication){
+    public ResponseEntity<Customer> addAddressToCustomer(UUID addressId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUsername = authentication.getName();
         Optional<Customer> authenticatedOptionalCustomer = customerRepository.findByUsername(authenticatedUsername);
         Optional<Address> optionalAddress = addressRepository.findById(addressId);

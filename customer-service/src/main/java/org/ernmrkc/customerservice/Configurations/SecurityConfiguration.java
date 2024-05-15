@@ -2,6 +2,7 @@ package org.ernmrkc.customerservice.Configurations;
 
 import org.ernmrkc.customerservice.Security.JwtAuthenticationFilter;
 import org.ernmrkc.customerservice.Security.JwtAuthenticationProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,5 +54,10 @@ public class SecurityConfiguration {
     @Bean
     JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
+    }
+
+    @Bean
+    JwtAuthenticationProvider jwtAuthenticationProvider(){
+        return new JwtAuthenticationProvider();
     }
 }
